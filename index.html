@@ -165,7 +165,46 @@ new MutationObserver(function(mutations) {
 </svg>
 </div>
 	<!-- Start of bodyEnd -->
-    
+
     <!-- End of bodyEnd -->
+<script>
+(function() {
+  function revealAppearElements() {
+    var els = document.querySelectorAll('[data-framer-appear-id]');
+    if (!els.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+          observer.unobserve(el);
+        }
+      });
+    }, { threshold: 0.1 });
+    els.forEach(function(el) {
+      if (parseFloat(el.style.opacity) < 0.1) {
+        observer.observe(el);
+      }
+    });
+  }
+
+  // Run after React hydration completes
+  if (document.readyState === 'complete') {
+    setTimeout(revealAppearElements, 500);
+  } else {
+    window.addEventListener('load', function() { setTimeout(revealAppearElements, 500); });
+  }
+
+  // Also run periodically in case React hydrates late
+  var attempts = 0;
+  var interval = setInterval(function() {
+    revealAppearElements();
+    attempts++;
+    if (attempts > 10) clearInterval(interval);
+  }, 800);
+})();
+</script>
 </body>
 </html>

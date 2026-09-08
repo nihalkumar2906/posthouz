@@ -176,13 +176,7 @@
       e.preventDefault();
       e.stopImmediatePropagation();
       e.stopPropagation();
-      var link = document.createElement('a');
-      link.href = CALENDLY;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      window.open(CALENDLY, '_blank', 'noopener,noreferrer');
       return;
     }
     // framer-OQbV0 contact button

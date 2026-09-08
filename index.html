@@ -167,15 +167,9 @@
   var CALENDLY = 'https://calendly.com/posthouz/30min';
   function isMobile(){ return window.innerWidth <= 809; }
 
-  function fixMobileCalendly(){
+  function fixContactBtn(){
     if(!isMobile()) return;
-    // Fix anchor links that point to hidden #form-2
-    document.querySelectorAll('a[href*="#form-2"]').forEach(function(a){
-      a.href = CALENDLY;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-    });
-    // Fix Book A Call button in the contact section (framer-OQbV0)
+    // Only fix the Book A Call button in the contact section (framer-OQbV0)
     document.querySelectorAll('.framer-OQbV0').forEach(function(btn){
       if(!btn._calendlyFixed){
         btn._calendlyFixed = true;
@@ -190,7 +184,7 @@
     });
   }
 
-  function run(){ setTimeout(fixMobileCalendly, 100); setTimeout(fixMobileCalendly, 2000); }
+  function run(){ setTimeout(fixContactBtn, 100); setTimeout(fixContactBtn, 2000); }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', run);
   } else {

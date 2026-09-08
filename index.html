@@ -167,22 +167,23 @@
   var CALENDLY = 'https://calendly.com/posthouz/30min';
   function isMobile(){ return window.innerWidth <= 809; }
 
-  // On click (capture phase): mutate href right before browser follows it — beats React re-renders and Safari popup blocker
+  // Capture phase: stopImmediatePropagation blocks React Router before it preventDefault+navigates to #form-2
   document.addEventListener('click', function(e){
     if(!isMobile()) return;
     var a = e.target.closest('a');
     // Book An Appointment → Calendly
     if(a && a.href.indexOf('form-2') !== -1 && /Book An Appointment/i.test(a.textContent)){
-      a.href = CALENDLY;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      // don't preventDefault — let browser follow the now-updated href
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      window.location.href = CALENDLY;
       return;
     }
     // framer-OQbV0 contact button
     var btn = e.target.closest('.framer-OQbV0');
     if(btn){
       e.preventDefault();
+      e.stopImmediatePropagation();
       e.stopPropagation();
       window.open(CALENDLY, '_blank', 'noopener,noreferrer');
     }

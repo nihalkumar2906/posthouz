@@ -162,5 +162,24 @@
 	<!-- Start of bodyEnd -->
     
     <!-- End of bodyEnd -->
+<script>
+(function(){
+  function fixMobileCalendly(){
+    if(window.innerWidth > 809) return;
+    document.querySelectorAll('a[href*="#form-2"]').forEach(function(a){
+      a.href = 'https://calendly.com/posthouz/30min';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+    });
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(fixMobileCalendly, 100); });
+  } else {
+    setTimeout(fixMobileCalendly, 100);
+  }
+  // Re-run after Framer renders
+  setTimeout(fixMobileCalendly, 2000);
+})();
+</script>
 </body>
 </html>

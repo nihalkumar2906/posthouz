@@ -167,29 +167,19 @@
   var CALENDLY = 'https://calendly.com/posthouz/30min';
   function isMobile(){ return window.innerWidth <= 809; }
 
-  // Rewrite hrefs on mobile so Safari allows navigation (window.open is blocked by popup policy)
-  function patchLinks(){
-    if(!isMobile()) return;
-    document.querySelectorAll('a').forEach(function(a){
-      if(a.href.indexOf('#form-2') !== -1 && /Book An Appointment/i.test(a.textContent)){
-        a.href = CALENDLY;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-      }
-    });
-  }
-  // Run after page hydrates and on any DOM mutations; also poll to beat React re-renders
-  document.addEventListener('DOMContentLoaded', patchLinks);
-  window.addEventListener('load', patchLinks);
-  var observer = new MutationObserver(patchLinks);
-  observer.observe(document.body, {childList:true, subtree:true});
-  // Framer re-renders can reset hrefs; keep patching until stable
-  var patchCount = 0;
-  var patchInterval = setInterval(function(){ patchLinks(); if(++patchCount > 20) clearInterval(patchInterval); }, 500);
-
-  // Also handle framer-OQbV0 contact button via window.open (desktop-only pattern, already works)
+  // On click (capture phase): mutate href right before browser follows it — beats React re-renders and Safari popup blocker
   document.addEventListener('click', function(e){
     if(!isMobile()) return;
+    var a = e.target.closest('a');
+    // Book An Appointment → Calendly
+    if(a && a.href.indexOf('form-2') !== -1 && /Book An Appointment/i.test(a.textContent)){
+      a.href = CALENDLY;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      // don't preventDefault — let browser follow the now-updated href
+      return;
+    }
+    // framer-OQbV0 contact button
     var btn = e.target.closest('.framer-OQbV0');
     if(btn){
       e.preventDefault();

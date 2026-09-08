@@ -173,8 +173,8 @@
     var a = e.target.closest('a[href*="#form-2"]');
     if(a && /Book An Appointment/i.test(a.textContent)){
       e.preventDefault();
-      var target = document.getElementById('form-small');
-      if(target){ var top = target.getBoundingClientRect().top + document.documentElement.scrollTop; document.documentElement.scrollTop = top; }
+      e.stopPropagation();
+      window.open(CALENDLY, '_blank', 'noopener,noreferrer');
       return;
     }
     var btn = e.target.closest('.framer-OQbV0');

@@ -167,16 +167,26 @@
   var CALENDLY = 'https://calendly.com/posthouz/30min';
   function isMobile(){ return window.innerWidth <= 809; }
 
-  // Use event delegation so React re-renders cannot undo our changes
+  // Rewrite hrefs on mobile so Safari allows navigation (window.open is blocked by popup policy)
+  function patchLinks(){
+    if(!isMobile()) return;
+    document.querySelectorAll('a').forEach(function(a){
+      if(a.href.indexOf('#form-2') !== -1 && /Book An Appointment/i.test(a.textContent)){
+        a.href = CALENDLY;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      }
+    });
+  }
+  // Run after page hydrates and on any DOM mutations
+  document.addEventListener('DOMContentLoaded', patchLinks);
+  window.addEventListener('load', patchLinks);
+  var observer = new MutationObserver(patchLinks);
+  observer.observe(document.body, {childList:true, subtree:true});
+
+  // Also handle framer-OQbV0 contact button via window.open (desktop-only pattern, already works)
   document.addEventListener('click', function(e){
     if(!isMobile()) return;
-    var a = e.target.closest('a[href*="#form-2"]');
-    if(a && /Book An Appointment/i.test(a.textContent)){
-      e.preventDefault();
-      e.stopPropagation();
-      window.open(CALENDLY, '_blank', 'noopener,noreferrer');
-      return;
-    }
     var btn = e.target.closest('.framer-OQbV0');
     if(btn){
       e.preventDefault();

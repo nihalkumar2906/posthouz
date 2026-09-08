@@ -167,35 +167,23 @@
   var CALENDLY = 'https://calendly.com/posthouz/30min';
   function isMobile(){ return window.innerWidth <= 809; }
 
-  function fixMobile(){
+  // Use event delegation so React re-renders cannot undo our changes
+  document.addEventListener('click', function(e){
     if(!isMobile()) return;
-    // Fix "Book An Appointment" anchors: on mobile they should go to #form-small not #form-2
-    document.querySelectorAll('a[href*="#form-2"]').forEach(function(a){
-      if(/Book An Appointment/i.test(a.textContent)){
-        a.href = '#form-small';
-      }
-    });
-    // Fix Book A Call button in the contact section (framer-OQbV0) -> open Calendly
-    document.querySelectorAll('.framer-OQbV0').forEach(function(btn){
-      if(!btn._calendlyFixed){
-        btn._calendlyFixed = true;
-        btn.addEventListener('click', function(e){
-          if(isMobile()){
-            e.preventDefault();
-            e.stopPropagation();
-            window.open(CALENDLY, '_blank', 'noopener,noreferrer');
-          }
-        }, true);
-      }
-    });
-  }
-
-  function run(){ setTimeout(fixMobile, 100); setTimeout(fixMobile, 2000); }
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', run);
-  } else {
-    run();
-  }
+    var a = e.target.closest('a[href*="#form-2"]');
+    if(a && /Book An Appointment/i.test(a.textContent)){
+      e.preventDefault();
+      var target = document.getElementById('form-small');
+      if(target) target.scrollIntoView({behavior:'smooth'});
+      return;
+    }
+    var btn = e.target.closest('.framer-OQbV0');
+    if(btn){
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(CALENDLY, '_blank', 'noopener,noreferrer');
+    }
+  }, true);
 })();
 </script>
 </body>

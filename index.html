@@ -178,11 +178,14 @@
       }
     });
   }
-  // Run after page hydrates and on any DOM mutations
+  // Run after page hydrates and on any DOM mutations; also poll to beat React re-renders
   document.addEventListener('DOMContentLoaded', patchLinks);
   window.addEventListener('load', patchLinks);
   var observer = new MutationObserver(patchLinks);
   observer.observe(document.body, {childList:true, subtree:true});
+  // Framer re-renders can reset hrefs; keep patching until stable
+  var patchCount = 0;
+  var patchInterval = setInterval(function(){ patchLinks(); if(++patchCount > 20) clearInterval(patchInterval); }, 500);
 
   // Also handle framer-OQbV0 contact button via window.open (desktop-only pattern, already works)
   document.addEventListener('click', function(e){

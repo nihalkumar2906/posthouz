@@ -164,21 +164,38 @@
     <!-- End of bodyEnd -->
 <script>
 (function(){
+  var CALENDLY = 'https://calendly.com/posthouz/30min';
+  function isMobile(){ return window.innerWidth <= 809; }
+
   function fixMobileCalendly(){
-    if(window.innerWidth > 809) return;
+    if(!isMobile()) return;
+    // Fix anchor links that point to hidden #form-2
     document.querySelectorAll('a[href*="#form-2"]').forEach(function(a){
-      a.href = 'https://calendly.com/posthouz/30min';
+      a.href = CALENDLY;
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
     });
+    // Fix Book A Call button in the contact section (framer-OQbV0)
+    document.querySelectorAll('.framer-OQbV0').forEach(function(btn){
+      if(!btn._calendlyFixed){
+        btn._calendlyFixed = true;
+        btn.addEventListener('click', function(e){
+          if(isMobile()){
+            e.preventDefault();
+            e.stopPropagation();
+            window.open(CALENDLY, '_blank', 'noopener,noreferrer');
+          }
+        }, true);
+      }
+    });
   }
+
+  function run(){ setTimeout(fixMobileCalendly, 100); setTimeout(fixMobileCalendly, 2000); }
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ setTimeout(fixMobileCalendly, 100); });
+    document.addEventListener('DOMContentLoaded', run);
   } else {
-    setTimeout(fixMobileCalendly, 100);
+    run();
   }
-  // Re-run after Framer renders
-  setTimeout(fixMobileCalendly, 2000);
 })();
 </script>
 </body>
